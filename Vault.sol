@@ -6,6 +6,11 @@ contract Vault {
     mapping(address => bool) public authorized;
     mapping(address => uint256) public balances;
 
+    modifier onlyAuthorized() {
+        require(authorized[msg.sender], "unauthorized");
+        _;
+    }
+
     constructor() {
         owner = msg.sender;
         authorized[msg.sender] = true;
@@ -15,7 +20,7 @@ contract Vault {
         balances[msg.sender] += msg.value;
     }
 
-    function withdraw(uint256 amount) external {
+    function withdraw(uint256 amount) external onlyAuthorized {
         _send(payable(msg.sender), amount);
     }
 
